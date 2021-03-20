@@ -1,6 +1,10 @@
 #Capstone Config
+version: 2.1
+
+
 jobs:
-  lint:
+  lintapp:
+    executor: python
     steps:
       - checkout
       - run:
@@ -11,3 +15,8 @@ jobs:
           name: run lint
           command: |
             make lint
+
+workflows:
+  deployment:
+    jobs:
+      - lintapp
