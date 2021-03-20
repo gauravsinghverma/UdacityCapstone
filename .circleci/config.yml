@@ -22,9 +22,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make install
-      - run:
-          name: run lint
-          command: |
             make lint
 
 workflows:
