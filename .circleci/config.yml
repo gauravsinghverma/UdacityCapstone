@@ -1,1 +1,13 @@
 #Capstone Config
+jobs:
+  lint:
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            make install
+      - run:
+          name: run lint
+          command: |
+            make lint
