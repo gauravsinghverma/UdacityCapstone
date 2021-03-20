@@ -1,6 +1,16 @@
 #Capstone Config
 version: 2.1
 
+executors:
+  docker:
+    docker:
+      - image: docker
+  python:
+    docker:
+      - image: python:3.7.3-stretch
+  aws:
+    docker:
+      - image: amazon/aws-cli
 
 jobs:
   lintapp:
