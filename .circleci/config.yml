@@ -17,8 +17,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            #apt-get install -y sudo
-            sudo apt-get update
+            make setup
             make install
       - run:
           name: run lint
