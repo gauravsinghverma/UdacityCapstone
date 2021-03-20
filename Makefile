@@ -10,6 +10,6 @@ install:
 		sudo chmod +x /bin/hadolint
 lint:
 	hadolint Dockerfile --ignore DL4000
-	pylint --disable=R,C,W1203 app.py
+	pylint --disable=R,C,W1203,W1202 app.py
 
-all: install lint test
+all: setup install lint
