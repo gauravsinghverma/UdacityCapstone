@@ -51,7 +51,7 @@ jobs:
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
-          resource-file-path: deployment.yml
+          resource-file-path: appdeployment.yml
           resource-name: deployment/gsvcapstone
 
   test-cluster:
