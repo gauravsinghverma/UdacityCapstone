@@ -15,7 +15,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install and lint dependencies
+          name: Install dependencies and Lint app
           command: |
             sudo apt-get update
             sudo apt-get install python3-venv
@@ -23,8 +23,24 @@ jobs:
             . virtualenv/bin/activate
             make install
             make lint
+  build:
+    machine: true
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Build, tag and push docker image to docker.io
+          command: |
+            docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}
+            docker build -t 30011802/gsvcapstone:${CIRCLE_WORKFLOW_ID:0:7} .
+            docker push 30011802/gsvcapstone:${CIRCLE_WORKFLOW_ID:0:7}
+            docker tag 30011802/gsvcapstone:${CIRCLE_WORKFLOW_ID:0:7} 30011802/gsvcapstone:latest
+            docker push 30011802/gsvcapstone:latest
 
 workflows:
   deployment:
     jobs:
       - lintapp
+      - build:
+          requires:
+            - "lintapp"
