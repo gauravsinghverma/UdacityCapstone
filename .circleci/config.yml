@@ -36,6 +36,43 @@ jobs:
             docker push 30011802/gsvcapstone:${CIRCLE_WORKFLOW_ID:0:7}
             docker tag 30011802/gsvcapstone:${CIRCLE_WORKFLOW_ID:0:7} 30011802/gsvcapstone:latest
             docker push 30011802/gsvcapstone:latest
+  
+  create-deployment:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          gsvcapstone
+        type: string
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: deployment/gsvcapstone
+
+  test-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          gsvcapstone
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - run:
+          command: |
+            kubectl get services            
+          name: Test cluster
+
+orbs:
+  aws-eks: circleci/aws-eks@1.0.3
+  kubernetes: circleci/kubernetes@0.11.0
 
 workflows:
   deployment:
@@ -44,3 +81,13 @@ workflows:
       - build:
           requires:
             - "lintapp"
+      - aws-eks/create-cluster:
+          cluster-name: gsvcapstone
+      - test-cluster:
+          cluster-name: gsvcapstone
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/delete-cluster:
+          cluster-name: gsvcapstone
+          requires:
+            - test-cluster
