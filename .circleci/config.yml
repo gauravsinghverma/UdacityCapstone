@@ -99,7 +99,7 @@ workflows:
           record: true
           requires:
               - create-deployment
-          resource-name: deployment/nginx-deployment
+          resource-name: deployment/gsvcapstone
       - test-cluster:
           cluster-name: gsvcapstone
           requires:
