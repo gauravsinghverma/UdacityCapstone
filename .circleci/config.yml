@@ -83,17 +83,17 @@ workflows:
           requires:
             - "lintapp"
       - aws-eks/create-cluster:
-          cluster-name: gsvcapstoneblue
+          cluster-name: gsvcapstone
       - create-deployment:
-          cluster-name: gsvcapstoneblue
+          cluster-name: gsvcapstone
           requires:
             - aws-eks/create-cluster
       - aws-eks/update-container-image:
-          cluster-name: gsvcapstoneblue
+          cluster-name: gsvcapstone
           container-image-updates: gsvcapstone=30011802/gsvcapstone
           post-steps:
               - kubernetes/delete-resource:
-                  resource-names: gsvcapstonegreen
+                  resource-names: gsvcapstone
                   resource-types: deployment
                   wait: true
           record: true
@@ -101,10 +101,10 @@ workflows:
               - create-deployment
           resource-name: deployment/gsvcapstone
       - test-cluster:
-          cluster-name: gsvcapstoneblue
+          cluster-name: gsvcapstone
           requires:
             - aws-eks/create-cluster
-      - aws-eks/delete-cluster:
-          cluster-name: gsvcapstoneblue
-          requires:
-            - test-cluster
+      # - aws-eks/delete-cluster:
+      #     cluster-name: gsvcapstone
+      #     requires:
+      #       - test-cluster
