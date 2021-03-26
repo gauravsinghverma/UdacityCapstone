@@ -106,5 +106,5 @@ workflows:
       #       - aws-eks/create-cluster
       - aws-eks/delete-cluster:
           cluster-name: gsvcapstone
-          requires:
-            - test-cluster
+          # requires:
+          #   - test-cluster
