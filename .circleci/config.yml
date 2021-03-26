@@ -67,10 +67,13 @@ jobs:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: << parameters.cluster-name >>
       - run:
-          command: |
-            kubectl get services            
           name: Test cluster
-
+          command: |
+            kubectl get services
+            kubectl get pods
+            kubectl expose deployment my-app --type=LoadBalancer --port=8080 --target-port=80
+            kubectl get svc
+          
 orbs:
   aws-eks: circleci/aws-eks@1.0.3
   kubernetes: circleci/kubernetes@0.11.2
@@ -78,33 +81,33 @@ orbs:
 workflows:
   deployment:
     jobs:
-      # - lintapp
-      # - build:
-      #     requires:
-      #       - "lintapp"
-      # - aws-eks/create-cluster:
-      #     cluster-name: gsvcapstone
-      # - create-deployment:
-      #     cluster-name: gsvcapstone
-      #     requires:
-      #       - aws-eks/create-cluster
-      # - aws-eks/update-container-image:
-      #     cluster-name: gsvcapstone
-      #     container-image-updates: gsvcapstone=30011802/gsvcapstone
-      #     post-steps:
-      #         - kubernetes/delete-resource:
-      #             resource-names: gsvcapstone
-      #             resource-types: deployment
-      #             wait: true
-      #     record: true
-      #     requires:
-      #         - create-deployment
-      #     resource-name: deployment/gsvcapstone
-      # - test-cluster:
-      #     cluster-name: gsvcapstone
-      #     requires:
-      #       - aws-eks/create-cluster
-      - aws-eks/delete-cluster:
+      - lintapp
+      - build:
+          requires:
+            - "lintapp"
+      - aws-eks/create-cluster:
           cluster-name: gsvcapstone
-          # requires:
-          #   - test-cluster
+      - create-deployment:
+          cluster-name: gsvcapstone
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: gsvcapstone
+          container-image-updates: gsvcapstone=30011802/gsvcapstone
+          post-steps:
+              - kubernetes/delete-resource:
+                  resource-names: gsvcapstone
+                  resource-types: deployment
+                  wait: true
+          record: true
+          requires:
+              - create-deployment
+          resource-name: deployment/gsvcapstone
+      - test-cluster:
+          cluster-name: gsvcapstone
+          requires:
+            - aws-eks/create-cluster
+      # - aws-eks/delete-cluster:
+      #     cluster-name: gsvcapstone
+      #     requires:
+      #       - test-cluster
