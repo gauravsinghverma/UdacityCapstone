@@ -42,7 +42,7 @@ jobs:
     parameters:
       cluster-name:
         description: |
-          gsvcapstone
+          gsvcapstone-new
         type: string
     steps:
       - checkout
@@ -53,14 +53,14 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: appdeployment.yml
-          resource-name: deployment/gsvcapstone
+          resource-name: deployment/gsvcapstone-new
 
   test-cluster:
     executor: aws-eks/python3
     parameters:
       cluster-name:
         description: |
-          gsvcapstone
+          gsvcapstone-new
         type: string
     steps:
       - kubernetes/install
@@ -73,7 +73,7 @@ jobs:
             kubectl get nodes
             kubectl get pods
             kubectl get deployment
-            kubectl get service/gsvcapstone
+            kubectl get service/gsvcapstone-new
             
                       
 orbs:
@@ -84,33 +84,33 @@ orbs:
 workflows:
   deployment:
     jobs:
-      # - lint-app
-      # - build:
-      #     requires:
-      #       - "lint-app"
-      # - aws-eks/create-cluster:
-      #     cluster-name: gsvcapstone
-      # - create-deployment:
-      #     cluster-name: gsvcapstone
-      #     requires:
-      #       - aws-eks/create-cluster
-      # - aws-eks/update-container-image:
-      #     cluster-name: gsvcapstone
-      #     container-image-updates: gsvcapstone=30011802/gsvcapstone
-      #     post-steps:
-      #         - kubernetes/delete-resource:
-      #             resource-names: gsvcapstone
-      #             resource-types: deployment
-      #             wait: true
-      #     record: true
-      #     requires:
-      #         - create-deployment
-      #     resource-name: deployment/gsvcapstone
-      # - test-cluster:
-      #     cluster-name: gsvcapstone
-      #     requires:
-      #       - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: gsvcapstone
+      - lint-app
+      - build:
+          requires:
+            - "lint-app"
+      - aws-eks/create-cluster:
+          cluster-name: gsvcapstone-new
+      - create-deployment:
+          cluster-name: gsvcapstone-new
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: gsvcapstone-new
+          container-image-updates: gsvcapstone=30011802/gsvcapstone
+          post-steps:
+              - kubernetes/delete-resource:
+                  resource-names: gsvcapstone-new
+                  resource-types: deployment
+                  wait: true
+          record: true
+          requires:
+              - create-deployment
+          resource-name: deployment/gsvcapstone-new
+      - test-cluster:
+          cluster-name: gsvcapstone-new
+          requires:
+            - aws-eks/update-container-image
+      # - aws-eks/delete-cluster:
+      #     cluster-name: gsvcapstone-new
           # requires:
           #   - test-cluster
