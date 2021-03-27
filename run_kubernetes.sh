@@ -15,5 +15,10 @@ kubectl run gsvcapstone --image=$dockerpath --port=80
 kubectl get pods
 
 # Step 4:
+# List kubernetes services
+kubectl get svc
+
+# Step 45
 # Forward the container port to a host
-kubectl port-forward gsvcapstone 8080:80
+#kubectl port-forward gsvcapstone 8080:80
+kubectl expose deployment gsvcapstone --type=LoadBalancer --port=8080 --target-port=80
