@@ -109,7 +109,7 @@ workflows:
           cluster-name: gsvcapstone
           requires:
             - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: gsvcapstone
+      # - aws-eks/delete-cluster:
+      #     cluster-name: gsvcapstone
           # requires:
           #   - test-cluster
